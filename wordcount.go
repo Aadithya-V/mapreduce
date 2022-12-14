@@ -1,8 +1,6 @@
 package main
 
-//
 // plugin-to compile run- go build -buildmode=plugin wordcount.go
-//
 
 import (
 	"strconv"
