@@ -24,7 +24,8 @@ func (a ByKey) Less(i, j int) bool { return a[i].Key < a[j].Key }
 
 func main() {
 	if len(os.Args) < 3 {
-		fmt.Fprintf(os.Stderr, "Usage: main.exe ex.so inputfiles...\n file *.so is the plugin implementing the Map and Reduce functions of the application\n")
+		fmt.Fprintf(os.Stderr, "Usage: main.exe ex.so inputfiles...\n")
+		fmt.Fprintf(os.Stderr, "File *.so is the plugin implementing the Map and Reduce functions.\n")
 		os.Exit(1)
 	}
 
