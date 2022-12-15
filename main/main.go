@@ -11,10 +11,10 @@ import (
 	mr "github.com/Aadithya-V/mapreduce"
 )
 
-// for implementing sort.Interface to sort by key.
+// bykey is used for implementing sort.Interface to sort by key values.
 type byKey []mr.KeyValue
 
-// for sorting by key.
+// Implementing the interface for sorting by key.
 func (a byKey) Len() int           { return len(a) }
 func (a byKey) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a byKey) Less(i, j int) bool { return a[i].Key < a[j].Key }
@@ -73,7 +73,7 @@ func main() {
 	ofile.Close()
 }
 
-// load the application Map and Reduce functions
+// loadPlugin loads the application Map and Reduce functions
 // from a plugin file, ex- wc.so
 func loadPlugin(filename string) (func(string, string) []mr.KeyValue, func(string, []string) string) {
 	p, err := plugin.Open(filename)
