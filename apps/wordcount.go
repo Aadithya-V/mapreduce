@@ -1,4 +1,4 @@
-package apps
+package main
 
 // plugin- to compile run- go build -buildmode=plugin wordcount.go
 
@@ -7,19 +7,19 @@ import (
 	"strings"
 	"unicode"
 
-	mapreduce "github.com/Aadithya-V/mapreduce"
+	mr "github.com/Aadithya-V/mapreduce"
 )
 
 // The Map function is called once for each file of input. The first
 // The return value is a slice of structs of key/value pairs.
-func Map(filename string, contents string) []mapreduce.KeyValue {
+func Map(filename string, contents string) []mr.KeyValue {
 	// tokenize contents into an array of words.
 	ff := func(r rune) bool { return !unicode.IsLetter(r) }
 	words := strings.FieldsFunc(contents, ff)
 
-	kva := []mapreduce.KeyValue{}
+	kva := []mr.KeyValue{}
 	for _, w := range words {
-		kv := mapreduce.KeyValue{Key: w, Value: "1"}
+		kv := mr.KeyValue{Key: w, Value: "1"}
 		kva = append(kva, kv)
 	}
 	return kva

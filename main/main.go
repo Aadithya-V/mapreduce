@@ -7,20 +7,17 @@ import (
 	"os"
 	"plugin"
 	"sort"
+
+	mr "github.com/Aadithya-V/mapreduce"
 )
 
-type KeyValue struct {
-	Key   string
-	Value string
-}
-
 // for implementing sort.Interface to sort by key.
-type ByKey []KeyValue
+type byKey []mr.KeyValue
 
 // for sorting by key.
-func (a ByKey) Len() int           { return len(a) }
-func (a ByKey) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a ByKey) Less(i, j int) bool { return a[i].Key < a[j].Key }
+func (a byKey) Len() int           { return len(a) }
+func (a byKey) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a byKey) Less(i, j int) bool { return a[i].Key < a[j].Key }
 
 func main() {
 	if len(os.Args) < 3 {
@@ -33,7 +30,7 @@ func main() {
 
 	// read each input file, pass to Map function,
 	// accumulate the intermediate Map output.
-	intermediate := []KeyValue{}
+	intermediate := []mr.KeyValue{}
 	for _, filename := range os.Args[2:] {
 		file, err := os.Open(filename)
 		if err != nil {
@@ -48,7 +45,7 @@ func main() {
 		intermediate = append(intermediate, kva...)
 	}
 
-	sort.Sort(ByKey(intermediate))
+	sort.Sort(byKey(intermediate))
 
 	ofilename := "output"
 	ofile, _ := os.Create(ofilename)
@@ -78,7 +75,7 @@ func main() {
 
 // load the application Map and Reduce functions
 // from a plugin file, ex- wc.so
-func loadPlugin(filename string) (func(string, string) []KeyValue, func(string, []string) string) {
+func loadPlugin(filename string) (func(string, string) []mr.KeyValue, func(string, []string) string) {
 	p, err := plugin.Open(filename)
 	if err != nil {
 		log.Fatalf("cannot load plugin %v", filename)
@@ -87,7 +84,7 @@ func loadPlugin(filename string) (func(string, string) []KeyValue, func(string, 
 	if err != nil {
 		log.Fatalf("cannot find Map in %v", filename)
 	}
-	mapf := xmapf.(func(string, string) []KeyValue)
+	mapf := xmapf.(func(string, string) []mr.KeyValue)
 	xreducef, err := p.Lookup("Reduce")
 	if err != nil {
 		log.Fatalf("cannot find Reduce in %v", filename)
