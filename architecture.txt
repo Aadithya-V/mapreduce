@@ -1,0 +1,48 @@
+Worker Nodes:
+
+    ENTRYPOINT: start pod replicas with deployment.yaml
+
+        Start registeration with the Master Node
+
+    MAP Workload:
+        Read job and partitioned dataset from queue.
+
+        Execute mapf 
+        Write intermediate data to n hashed partitions (n reduce workers).
+        Send metadata to the gRPC server.
+
+    REDUCE Workload:    
+        Read assigned partition from all (map) locations.
+
+        Execute the reduce task.
+
+        Write output to file.
+
+        Send output file to master.
+
+    
+
+Master Node:
+
+    ENTRYPOINT: start master server pod in the cluster.
+
+        gRPC server:
+            Listen for and accept registration requests from worker nodes with ack.
+        
+        API Server:
+            Listen for work with exposed REST API and queue incoming workloads.
+            Schedule and ack with result endpoint (ftp?).
+            Close conn with user client.
+            
+        Download and Split dataset into m partitions (m worker map nodes)
+
+        Load plugin mapf and reducef functions.
+
+        Queue map workload for worker nodes.
+
+        Once all assigned map tasks are completed (check for failures and retask),
+        then schedule reduce tasks to n workers.
+
+        Receive/read resultant n output files.
+
+        Send output files to user.
